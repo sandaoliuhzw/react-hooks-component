@@ -808,11 +808,11 @@ module.exports = function (webpackEnv) {
       tls: 'empty',
       child_process: 'empty',
     },
-    //配置热更新
+    // 配置热更新
     devServer: {
-      historyApiFallback: true,//不跳转.
-      hot: true,  //是否启用模块热替换功能
-      inline: true,//实时更新
+      historyApiFallback: true,// 不跳转.
+      hot: true,  // 是否启用模块热替换功能
+      inline: true,// 实时更新
     },
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter

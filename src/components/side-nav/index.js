@@ -1,21 +1,27 @@
 import './side-nav.less'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
 let navList = [
   {
     name: '首页',
-    link: 'home'
+    link: '/home'
   },
   {
     name: '布局',
-    link: 'layout'
+    link: '/layout'
   }
 ]
 const Item = (props) => {
+  const { pathname } = useLocation()
+  const [path, setPath] = useState(pathname)
+  useEffect(() => {
+    let path = pathname
+    setPath(path)
+  }, [pathname]);
   return (
-    // <li to={props.data.link}>{props.data.name}</li>
     <li >
-      <Link to={props.data.link}>
+      <Link className={props.data.link === path ? 'current-nav' : ''} to={props.data.link}>
         {props.data.name}
       </Link>
     </li>
