@@ -336,6 +336,11 @@ module.exports = function (webpackEnv) {
           'scheduler/tracing': 'scheduler/tracing-profiling',
         }),
         ...(modules.webpackAliases || {}),
+        // 配置绝对路径
+        "@src": path.resolve("src"),
+        "@component": path.resolve("src/components"),
+        "@pages": path.resolve("src/pages"),
+        "@utils": path.resolve("src/utils"),
       },
       plugins: [
         // Adds support for installing with Plug'n'Play, leading to faster installs and adding
@@ -539,15 +544,23 @@ module.exports = function (webpackEnv) {
             {
               test: lessRegex,
               exclude: lessModuleRegex,
-              use: getStyleLoaders(
+              use: [
+                ...getStyleLoaders(
+                  {
+                    importLoaders: 5,
+                    sourceMap: isEnvProduction
+                      ? shouldUseSourceMap
+                      : isEnvDevelopment,
+                  },
+                  'less-loader'
+                ),
                 {
-                  importLoaders: 5,
-                  sourceMap: isEnvProduction
-                    ? shouldUseSourceMap
-                    : isEnvDevelopment,
+                  loader: 'style-resources-loader',
+                  options: {
+                    patterns: path.resolve(__dirname, '../src/assets/style/common.less'),
+                  },
                 },
-                'less-loader'
-              ),
+              ],
               // Don't consider CSS imports dead code even if the
               // containing package claims to have no side effects.
               // Remove this when webpack adds a warning or an error for this.
@@ -558,18 +571,26 @@ module.exports = function (webpackEnv) {
             // using the extension .module.scss or .module.sass
             {
               test: lessModuleRegex,
-              use: getStyleLoaders(
+              use: [
+                ...getStyleLoaders(
+                  {
+                    importLoaders: 5,
+                    sourceMap: isEnvProduction
+                      ? shouldUseSourceMap
+                      : isEnvDevelopment,
+                    modules: {
+                      getLocalIdent: getCSSModuleLocalIdent,
+                    },
+                  },
+                  'less-loader'
+                ),
                 {
-                  importLoaders: 5,
-                  sourceMap: isEnvProduction
-                    ? shouldUseSourceMap
-                    : isEnvDevelopment,
-                  modules: {
-                    getLocalIdent: getCSSModuleLocalIdent,
+                  loader: 'style-resources-loader',
+                  options: {
+                    patterns: path.resolve(__dirname, '../src/assets/style/common.less'),
                   },
                 },
-                'less-loader'
-              ),
+              ]
             },
             // "file" loader makes sure those assets get served by WebpackDevServer.
             // When you `import` an asset, you get its (virtual) filename.
@@ -786,6 +807,12 @@ module.exports = function (webpackEnv) {
       net: 'empty',
       tls: 'empty',
       child_process: 'empty',
+    },
+    //配置热更新
+    devServer: {
+      historyApiFallback: true,//不跳转.
+      hot: true,  //是否启用模块热替换功能
+      inline: true,//实时更新
     },
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter

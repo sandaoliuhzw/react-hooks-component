@@ -13,13 +13,12 @@ function App() {
         <SideNav></SideNav>
         <div className="content">
           <Route path="/">
-            <Home></Home>
-          </Route>
-          <Route path="/home">
-            <Home></Home>
-          </Route>
-          <Route path="/layout">
-            <Layout></Layout>
+            <Route path="/home">
+              <Home></Home>
+            </Route>
+            <Route path="/layout">
+              <Layout></Layout>
+            </Route>
           </Route>
         </div>
       </Router>
