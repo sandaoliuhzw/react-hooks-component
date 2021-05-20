@@ -10,18 +10,46 @@ let navList = [
   {
     name: '布局',
     link: '/layout'
+  },
+  {
+    name: '输入',
+    link: '/inputsdl'
   }
 ]
 const Item = (props) => {
   const { pathname } = useLocation()
   const [path, setPath] = useState(pathname)
+  const [isHome, setIsHome] = useState(false)
   useEffect(() => {
     let path = pathname
+    // console.log(path)
     setPath(path)
+    if (path === '/') {
+      setIsHome(true)
+    } else {
+      setIsHome(false)
+    }
   }, [pathname]);
+  const currentNav = (link) => {
+    if (link === path) {
+      return 'current-nav'
+    } else {
+      return ''
+    }
+  }
+  const homeNav = (link) => {
+    if (link === '/home' && isHome) {
+      return 'home-nav'
+    } else {
+      return ''
+    }
+  }
   return (
     <li >
-      <Link className={props.data.link === path ? 'current-nav' : ''} to={props.data.link}>
+      <Link 
+        className={`${currentNav(props.data.link)} ${homeNav(props.data.link)}`} 
+        to={props.data.link}
+      >
         {props.data.name}
       </Link>
     </li>

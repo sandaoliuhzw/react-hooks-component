@@ -1,9 +1,10 @@
-// import React, { Fragment } from 'react'
+// import React, { useState, useEffect } from 'react'
 import Header from './components/header'
 import SideNav from './components/side-nav'
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
-import Home from './pages/home'
-import Layout from './pages/layout'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import Home from '@pages/home'
+import Layout from '@pages/layout'
+import InputSDL from '@pages/inputsdl'
 
 function App() {
   return (
@@ -12,15 +13,20 @@ function App() {
       <Router>
         <SideNav></SideNav>
         <div className="content">
-          <Route path="/">
-            <Redirect to="/home" />
+          <Switch>
+            <Route path="/" exact>
+              <Home></Home>
+            </Route>
             <Route path="/home">
               <Home></Home>
             </Route>
             <Route path="/layout">
               <Layout></Layout>
             </Route>
-          </Route>
+            <Route path="/inputsdl">
+              <InputSDL></InputSDL>
+            </Route>
+          </Switch>
         </div>
       </Router>
     </div>

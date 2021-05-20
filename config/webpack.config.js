@@ -338,7 +338,7 @@ module.exports = function (webpackEnv) {
         ...(modules.webpackAliases || {}),
         // 配置绝对路径
         "@src": path.resolve("src"),
-        "@component": path.resolve("src/components"),
+        "@components": path.resolve("src/components"),
         "@pages": path.resolve("src/pages"),
         "@utils": path.resolve("src/utils"),
       },
