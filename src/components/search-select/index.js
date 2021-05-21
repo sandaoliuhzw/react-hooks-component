@@ -7,11 +7,24 @@ export default function useMemoSearchSelect() {
   const [isFocus, setIsFocus] = useState(false)
   const [valueList, setValueList] = useState(dataList)
   const [inputValue, setInputValue] = useState('')
+  const [isInputComplete, setIsInputComplete] = useState(true)
 
   const handleFocus = () => {
     setValueList(dataList)
     return setIsFocus(true)
   }
+
+  const searchAssignment = (val) => {
+    let value = ''
+    dataList.map(item => {
+      if (item.name === val) {
+        value = val
+      }
+      return item
+    })
+    return value
+  }
+
   const handleBlur = () => {
     if (isFocus) {
       setInputValue(searchAssignment(inputValue))
@@ -43,23 +56,11 @@ export default function useMemoSearchSelect() {
     setInputValue(obj.name)
   }
 
-  const handleChageInputValue = (event) => {
-    setInputValue(event.target.value)
-    let noDataBox = searchSelectRef.current.querySelector('.no-data')
-    if (!event.target.value) {
-      noDataBox.style.display = 'none'
-      return setValueList(dataList)
-    }
-  }
-
-  const handleChageCompositionend = (event) => {
+  const matchingArr = (value) => {
     let noDataBox = searchSelectRef.current.querySelector('.no-data')
     let list = []
-    valueList.filter(item => {
-      if (item.name.indexOf(event.target.value) >= 0) {
-        list.push(item)
-      }
-      return item
+    list = dataList.filter(item => {
+      return item.name.indexOf(value) >= 0
     })
 
     if (list.length === 0) {
@@ -68,18 +69,29 @@ export default function useMemoSearchSelect() {
     if (list.length > 0) {
       noDataBox.style.display = 'none'
     }
-    setValueList(list)
+    return setValueList(list)
   }
 
-  const searchAssignment = (val) => {
-    let value = ''
-    dataList.map(item => {
-      if (item.name === val) {
-        value = val
-      }
-      return item
-    })
-    return value
+  const handleChageInputValue = (event) => {
+    setInputValue(event.target.value)
+    if (isInputComplete) {
+      return matchingArr(event.target.value)
+    }
+    
+    let noDataBox = searchSelectRef.current.querySelector('.no-data')
+    if (!event.target.value) {
+      noDataBox.style.display = 'none'
+      return setValueList(dataList)
+    }
+  }
+
+  const chageCompositionStart = () => {
+    setIsInputComplete(false)
+  }
+
+  const chageCompositionEnd = (event) => {
+    setIsInputComplete(true)
+    return matchingArr(event.target.value)
   }
   
   return (
@@ -90,7 +102,8 @@ export default function useMemoSearchSelect() {
         onBlur={handleBlur}
         value={inputValue}
         onChange={handleChageInputValue}
-        onCompositionEnd={handleChageCompositionend}
+        onCompositionStart={chageCompositionStart}
+        onCompositionEnd={chageCompositionEnd}
       ></input>
       {/* <i className="triangle">△</i> */}
       <i className="triangle"></i>
