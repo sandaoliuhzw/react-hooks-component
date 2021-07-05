@@ -2,11 +2,13 @@ import React, { useState, useEffect, useRef } from 'react'
 import './search-select.less'
 import dataList from './dataList'
 
-export default function useMemoSearchSelect() {
+export default function useMemoSearchSelect(props) {
+  const {inputValue, setInputValue} = props
+
   const searchSelectRef = useRef()
   const [isFocus, setIsFocus] = useState(false)
   const [valueList, setValueList] = useState(dataList)
-  const [inputValue, setInputValue] = useState('')
+  // const [inputValue, setInputValue] = useState('')
   const [isInputComplete, setIsInputComplete] = useState(true)
 
   const handleFocus = () => {
@@ -25,12 +27,85 @@ export default function useMemoSearchSelect() {
     return value
   }
 
+  const upDwSearchAssignment = (val, uoOrDw) => {
+    let value = ''
+    if (val) {
+      let indexNum = null 
+      dataList.map((item, index) => {
+        if (item.name === val) {
+         indexNum = index
+        }
+        return item
+      })
+      if (uoOrDw === 'up') {
+        if (indexNum > 0) {
+          value = dataList[indexNum - 1].name
+        } else {
+          let leng = dataList.length - 1
+          value = dataList[leng].name
+        }
+      }
+      if (uoOrDw === 'dw') {
+        if (indexNum < dataList.length - 1) {
+          value = dataList[indexNum + 1].name
+        } else {
+          value = dataList[0].name
+        }
+      }
+    } else {
+      if (uoOrDw === 'up') {
+        let leng = dataList.length - 1
+        value = dataList[leng].name
+      }
+      if (uoOrDw === 'dw') {
+        value = dataList[0].name
+      }
+    }
+    setInputValue(value)
+  }
+
   const handleBlur = () => {
     if (isFocus) {
       setInputValue(searchAssignment(inputValue))
     }
     return setIsFocus(false)
   }
+
+  useEffect(() => {
+    if (!inputValue) return false 
+    if (!isFocus) return false 
+    let indexNum = null
+    dataList.map((item, index) => {
+      if (item.name === inputValue) {
+       indexNum = index
+      }
+      return item
+    })
+    let optionBox = searchSelectRef.current.querySelector('.option-box')
+    setTimeout(() => {
+      optionBox.scrollTop = indexNum * 36
+    }, 10)
+  }, [inputValue, isFocus])
+   
+  useEffect(() => {
+    document.onkeydown = function(event) {
+      let e = event || window.event || arguments.calle.caller.arguments[0]
+      if (e && e.keyCode === 38) {
+        if (isFocus) {
+          upDwSearchAssignment(inputValue, 'up')
+        }
+      }
+      if (e && e.keyCode === 40) {
+        if (isFocus) {
+          upDwSearchAssignment(inputValue, 'dw')
+        }
+      }
+    }
+    return () => {
+      document.onkeydown = null
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFocus, inputValue])
 
   useEffect(() => {
     let optionBox = searchSelectRef.current.querySelector('.option-box')
@@ -96,20 +171,24 @@ export default function useMemoSearchSelect() {
   
   return (
     <div className="search-select"ref={searchSelectRef}>
-      <input 
-        className="input-box" type="text" placeholder="请搜索"
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        value={inputValue}
-        onChange={handleChageInputValue}
-        onCompositionStart={chageCompositionStart}
-        onCompositionEnd={chageCompositionEnd}
-      ></input>
+      <div className="input-box">
+        <input 
+          className="box"
+          type="text" placeholder="请搜索"
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          value={inputValue}
+          onChange={handleChageInputValue}
+          onCompositionStart={chageCompositionStart}
+          onCompositionEnd={chageCompositionEnd}
+        ></input>
+      </div>
       {/* <i className="triangle">△</i> */}
       <i className="triangle"></i>
       <div className="option-box">
         {valueList.map(item => 
-          <li className="li-box" 
+          <li 
+            className={`li-box ${item.name === inputValue ? 'select-value' : ''}`} 
             key={item.id} 
             value={item.id}
             onMouseDown={ () => handleClickOption(item) }

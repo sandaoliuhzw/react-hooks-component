@@ -14,6 +14,14 @@ let navList = [
   {
     name: '输入',
     link: '/inputsdl'
+  },
+  {
+    name: '日历',
+    link: '/calendar'
+  },
+  {
+    name: '抽奖转盘',
+    link: '/lotteryTurntable'
   }
 ]
 const Item = (props) => {

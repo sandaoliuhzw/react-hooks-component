@@ -5,6 +5,8 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Home from '@pages/home'
 import Layout from '@pages/layout'
 import InputSDL from '@pages/inputsdl'
+import Calendar from '@pages/calendar'
+import LotteryTurntable from '@pages/lottery_turntable'
 
 function App() {
   return (
@@ -25,6 +27,12 @@ function App() {
             </Route>
             <Route path="/inputsdl">
               <InputSDL></InputSDL>
+            </Route>
+            <Route path="/calendar">
+              <Calendar></Calendar>
+            </Route>
+            <Route path="/lotteryTurntable">
+              <LotteryTurntable></LotteryTurntable>
             </Route>
           </Switch>
         </div>
